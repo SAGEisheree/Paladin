@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Sparkles, MessageSquare, Brain, GraduationCap } from 'lucide-react';
 import Nav from './nav.jsx';
@@ -6,11 +6,12 @@ import Nav from './nav.jsx';
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const [previousQuizzes, setPreviousQuizzes] = useState([]);
 
   return (
     <div className="min-h-screen bg-[#57c5e8] text-[#1a1a1a]  selection:bg-white/30">
       {/* Navigation */}
-        <Nav />
+      <Nav />
 
       {/* Hero Section */}
       <main className="flex flex-col items-center justify-center text-center px-4 pt-20 pb-32">
@@ -24,12 +25,12 @@ const HomePage = () => {
             Don't just get the <span className="border-2 border-black rounded-full px-4 py-1 mx-1 not-italic">answer.</span> <br />
             Move beyond the answer. Master the <span className="bg-white/30 px-2 rounded-md">logic</span> through conversation.
           </p>
-          
+
 
         </div>
 
         <div className="mt-16 flex flex-col items-center gap-4">
-          <button 
+          <button
             onClick={() => navigate('/next')}
             className="bg-[#1a1a1a] text-white px-10 py-4 rounded-full text-lg font-bold hover:scale-105 transition shadow-2xl"
           >
@@ -40,6 +41,33 @@ const HomePage = () => {
           </p>
         </div>
       </main>
+
+      {/* Previous Quizzes Section */}
+      <section className="px-8 pb-16 w-full max-w-6xl mx-auto">
+        <h2 className="text-3xl font-bold mb-6 text-center md:text-left tracking-tight">
+          Previous Quizzes
+        </h2>
+        {previousQuizzes.length === 0 ? (
+          <div className="bg-white/10 backdrop-blur-sm p-12 rounded-[2rem] border border-white/20 text-center flex flex-col items-center justify-center">
+            <GraduationCap size={48} className="opacity-50 mb-4" />
+            <p className="text-xl opacity-70 font-medium">
+              No previous quizzes yet
+            </p>
+            <p className="text-sm opacity-50 mt-2">
+              Start learning to see your history here.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {previousQuizzes.map((quiz, index) => (
+              <div key={index} className="bg-white/10 backdrop-blur-sm p-6 rounded-[2rem] border border-white/20 hover:bg-white/20 transition cursor-pointer">
+                <h3 className="font-bold text-xl">{quiz.title}</h3>
+                <p className="opacity-80 mt-2 text-sm">{quiz.date}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
 
       {/* Minimal Feature Cards */}
       <section className="px-8 pb-20 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
