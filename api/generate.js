@@ -18,8 +18,8 @@ export default async function handler(req, res) {
             model: "llama-3.3-70b-versatile", // Use a valid Groq model ID
             messages: [
                 {
-        role: "system",
-        content: `You are an expert tutor specializing in ${quizData.topic}, specifically ${quizData.subtopic}. 
+                    role: "system",
+                    content: `You are an expert tutor specializing in ${quizData.topic}, specifically ${quizData.subtopic}. 
 
 **Instructions:**
 1. **Language:** Always communicate in ${quizData.language}.
