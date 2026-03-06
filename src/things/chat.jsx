@@ -6,10 +6,11 @@ import OpenAI from "openai"; // Import it here instead
 import { marked } from 'marked';
 
 const Chat = () => {
-  const { quizData, setQuizData, currentQuizId, previousQuizzes, updateQuizMessages } = useQuizContext();
+  const { quizData, setQuizData, currentQuizId, previousQuizzes, updateQuizSession } = useQuizContext();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const scrollRef = useRef(null);
   const isFirstRun = useRef(true);
 
@@ -27,8 +28,9 @@ const Chat = () => {
     const session = previousQuizzes.find(q => q.id === currentQuizId);
 
     if (session && session.messages.length > 0) {
-      // Priority 1: Restore existing session messages
+      // Priority 1: Restore existing session messages and progress
       setMessages(session.messages);
+      setProgress(session.progress || 0);
       if (!quizData.topic) setQuizData(session.config);
       isFirstRun.current = false;
     } else if (quizData.topic) {
@@ -42,9 +44,16 @@ const Chat = () => {
               {
                 role: "system",
                 content: `You are a Socratic tutor teaching ${quizData.topic} (${quizData.subtopic}). 
+                                        Target Goal: Reach ${quizData.knowledgeLevel} level of mastery.
                                         Language: ${quizData.language}. Extra info: ${quizData.instructions}.
-                                        Ask exactly ${quizData.numQuestions} questions one by one. 
-                                        **Always format your questions in bold** using **double asterisks** around the entire question.
+                                        
+                                        Your Goal:
+                                        1. Guide the student using Socratic questioning.
+                                        2. Periodically assess their understanding.
+                                        3. **At the end of EVERY response, you MUST include a progress update in this EXACT format: [[PROGRESS: X]] where X is an integer from 0 to 100 representing how close they are to the ${quizData.knowledgeLevel} goal.**
+                                        4. When progress reaches 100, congratulate them and conclude the session.
+                                        
+                                        **Always format your questions in bold** using **double asterisks**.
                                         Start now by introducing yourself and asking the first question.`
               },
               { role: "user", content: "I'm ready to start the quiz!" }
@@ -52,9 +61,24 @@ const Chat = () => {
           });
 
           const firstReply = response.choices[0].message.content;
-          const initialMessages = [{ role: "assistant", content: firstReply }];
+
+          // Parse progress from AI response
+          const progressMatch = firstReply.match(/\[\[PROGRESS:\s*(\d+)\]\]/);
+          const nextProgress = progressMatch ? parseInt(progressMatch[1]) : progress;
+          if (progressMatch) {
+            setProgress(nextProgress);
+          }
+
+          const cleanReply = firstReply.replace(/\[\[PROGRESS:\s*\d+\]\]/g, '').trim();
+          const initialMessages = [{ role: "assistant", content: cleanReply }];
           setMessages(initialMessages);
-          if (currentQuizId) updateQuizMessages(currentQuizId, initialMessages);
+
+          if (currentQuizId) {
+            updateQuizSession(currentQuizId, {
+              messages: initialMessages,
+              progress: nextProgress
+            });
+          }
           isFirstRun.current = false;
         } catch (err) {
           console.error("Failed to start quiz:", err);
@@ -74,7 +98,7 @@ const Chat = () => {
     // Use functional update to ensure we always have the latest history
     setMessages(prev => {
       const next = [...prev, userMsg];
-      if (currentQuizId) updateQuizMessages(currentQuizId, next);
+      if (currentQuizId) updateQuizSession(currentQuizId, { messages: next });
       return next;
     });
 
@@ -88,8 +112,9 @@ const Chat = () => {
             role: "system",
             content: `You are a Socratic tutor teaching ${quizData.topic}. 
                                 Focus on ${quizData.subtopic}. Language: ${quizData.language}.
-                                Ask ${quizData.numQuestions} questions one by one.
-                                **Always format your questions in bold** using **double asterisks** around the entire question.`
+                                Goal: Reach ${quizData.knowledgeLevel} mastery.
+                                **At the end of EVERY response, include: [[PROGRESS: X]]** where X is 0-100.
+                                **Always format questions in bold**.`
           },
           ...messages,
           userMsg
@@ -97,9 +122,23 @@ const Chat = () => {
       });
 
       const reply = response.choices[0].message.content;
+
+      // Parse progress
+      const progressMatch = reply.match(/\[\[PROGRESS:\s*(\d+)\]\]/);
+      const nextProgress = progressMatch ? parseInt(progressMatch[1]) : progress;
+      if (progressMatch) {
+        setProgress(nextProgress);
+      }
+
+      const cleanReply = reply.replace(/\[\[PROGRESS:\s*\d+\]\]/g, '').trim();
       setMessages(prev => {
-        const next = [...prev, { role: "assistant", content: reply }];
-        if (currentQuizId) updateQuizMessages(currentQuizId, next);
+        const next = [...prev, { role: "assistant", content: cleanReply }];
+        if (currentQuizId) {
+          updateQuizSession(currentQuizId, {
+            messages: next,
+            progress: nextProgress
+          });
+        }
         return next;
       });
     } catch (err) {
@@ -127,6 +166,20 @@ const Chat = () => {
             `}</style>
       <Nav />
       <div className="flex-1 max-w-4xl mx-auto w-full p-4 flex flex-col overflow-hidden">
+        {/* Progress Bar */}
+        <div className="mb-4 bg-white/20 backdrop-blur-md rounded-2xl p-4 border border-white/30 shadow-lg">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-xs font-black uppercase tracking-widest opacity-60">Goal: {quizData.knowledgeLevel} Mastery</span>
+            <span className="text-xs font-black">{progress}%</span>
+          </div>
+          <div className="w-full h-3 bg-black/10 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-[#1a1a1a] transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(0,0,0,0.2)]"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+
         <div className="flex-1 bg-white/20 backdrop-blur-md rounded-3xl p-6 overflow-y-auto space-y-4">
           {messages.map((m, i) => (
             <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -146,7 +199,7 @@ const Chat = () => {
           {loading && (
             <div className="flex justify-start">
               <div className="bg-white text-black p-4 rounded-2xl shadow-lg border border-black/5 animate-pulse">
-                Typin...
+                Paladin is thinking...
               </div>
             </div>
           )}

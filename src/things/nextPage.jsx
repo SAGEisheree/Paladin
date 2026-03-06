@@ -65,10 +65,10 @@ const NextPage = () => {
       title: 'Additional Context'
     },
     {
-      name: 'Number of questions',
+      name: 'Knowledge Level',
       icon: Briefcase,
-      content: 'Choose the number of questions you want to be asked.',
-      title: 'Pick number of questions'
+      content: 'Define the target mastery you want to achieve through this session.',
+      title: 'Pick Knowledge Level'
     },
   ];
 
@@ -276,33 +276,33 @@ const NextPage = () => {
                       <div className="space-y-4">
                         <div className="flex flex-wrap gap-3">
                           <button
-                            onClick={() => setQuizData({ ...quizData, numQuestions: quizData.numQuestions === '4' ? '' : '4' })}
-                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${quizData.numQuestions === '4'
+                            onClick={() => setQuizData({ ...quizData, knowledgeLevel: quizData.knowledgeLevel === 'Beginner' ? '' : 'Beginner' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${quizData.knowledgeLevel === 'Beginner'
                               ? 'bg-[#1a1a1a] text-white shadow-xl'
                               : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
                               }`}
                           >
-                            4
+                            Beginner
                           </button>
                           <button
-                            onClick={() => setQuizData({ ...quizData, numQuestions: quizData.numQuestions === '8' ? '' : '8' })}
-                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${quizData.numQuestions === '8'
+                            onClick={() => setQuizData({ ...quizData, knowledgeLevel: quizData.knowledgeLevel === 'Intermediate' ? '' : 'Intermediate' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${quizData.knowledgeLevel === 'Intermediate'
                               ? 'bg-[#1a1a1a] text-white shadow-xl'
                               : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
                               }`}
                           >
-                            8
+                            Intermediate
+                          </button>
+                          <button
+                            onClick={() => setQuizData({ ...quizData, knowledgeLevel: quizData.knowledgeLevel === 'Master' ? '' : 'Master' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${quizData.knowledgeLevel === 'Master'
+                              ? 'bg-[#1a1a1a] text-white shadow-xl'
+                              : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                              }`}
+                          >
+                            Master
                           </button>
                         </div>
-                        <input
-                          type="number"
-                          placeholder="or enter custom number..."
-                          min="1"
-                          max="50"
-                          value={quizData.numQuestions === '4' || quizData.numQuestions === '8' ? '' : quizData.numQuestions}
-                          onChange={(e) => setQuizData({ ...quizData, numQuestions: e.target.value })}
-                          className="w-full bg-white/20 border border-white/40 text-[#1a1a1a] placeholder:text-black/50 px-6 py-4 rounded-2xl font-medium text-lg focus:outline-none focus:ring-2 focus:ring-black/20"
-                        />
                       </div>
                     )}
                   </div>

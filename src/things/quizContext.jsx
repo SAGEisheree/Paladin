@@ -7,7 +7,7 @@ export const useQuizContext = () => useContext(QuizContext);
 export const QuizProvider = ({ children }) => {
     const [quizData, setQuizData] = useState(() => {
         const saved = localStorage.getItem('paladin_current_config');
-        return saved ? JSON.parse(saved) : { language: '', topic: '', subtopic: '', instructions: '', numQuestions: '' };
+        return saved ? JSON.parse(saved) : { language: '', topic: '', subtopic: '', instructions: '', knowledgeLevel: '' };
     });
 
     const [previousQuizzes, setPreviousQuizzes] = useState(() => {
@@ -32,9 +32,9 @@ export const QuizProvider = ({ children }) => {
         localStorage.setItem('paladin_current_config', JSON.stringify(newQuiz.config));
     }, []);
 
-    const updateQuizMessages = useCallback((quizId, messages) => {
+    const updateQuizSession = useCallback((quizId, updates) => {
         setPreviousQuizzes(prev => {
-            const updated = prev.map(quiz => quiz.id === quizId ? { ...quiz, messages } : quiz);
+            const updated = prev.map(quiz => quiz.id === quizId ? { ...quiz, ...updates } : quiz);
             localStorage.setItem('paladin_history', JSON.stringify(updated));
             return updated;
         });
@@ -60,7 +60,7 @@ export const QuizProvider = ({ children }) => {
     }, []);
 
     const resetQuiz = useCallback(() => {
-        const empty = { language: '', topic: '', subtopic: '', instructions: '', numQuestions: '' };
+        const empty = { language: '', topic: '', subtopic: '', instructions: '', knowledgeLevel: '' };
         setQuizData(empty);
         localStorage.removeItem('paladin_current_config');
         setCurrentQuizId(null);
@@ -75,7 +75,7 @@ export const QuizProvider = ({ children }) => {
             currentQuizId,
             setCurrentQuizId,
             addQuiz,
-            updateQuizMessages,
+            updateQuizSession,
             deleteQuiz,
             selectSession,
             resetQuiz

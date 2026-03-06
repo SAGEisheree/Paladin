@@ -145,8 +145,8 @@ const HomePage = () => {
                   <p className="text-lg font-bold">{selectedQuiz.config.language}</p>
                 </div>
                 <div className="bg-white/20 p-6 rounded-[2rem] border border-white/30">
-                  <p className="text-xs font-black uppercase tracking-widest opacity-40 mb-1">Target</p>
-                  <p className="text-lg font-bold">{selectedQuiz.config.numQuestions} Questions</p>
+                  <p className="text-xs font-black uppercase tracking-widest opacity-40 mb-1">Level</p>
+                  <p className="text-lg font-bold">{selectedQuiz.config.knowledgeLevel}</p>
                 </div>
               </div>
 
