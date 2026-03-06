@@ -6,7 +6,7 @@ import { useQuizContext } from './quizContext';
 
 const NextPage = () => {
   const [activeTab, setActiveTab] = useState('Pick a Language');
-  const { quizData, setQuizData } = useQuizContext();
+  const { quizData, setQuizData, addQuiz } = useQuizContext();
   const navigate = useNavigate();
 
   const languages = [
@@ -22,6 +22,20 @@ const NextPage = () => {
   };
 
   const handleGo = () => {
+    const newQuiz = {
+      id: Date.now().toString(),
+      title: `${quizData.topic} - ${quizData.subtopic}`,
+      date: new Date().toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }),
+      config: { ...quizData },
+      messages: []
+    };
+    addQuiz(newQuiz);
     navigate('/chat');
   };
 
@@ -138,22 +152,20 @@ const NextPage = () => {
                       <div className="space-y-4">
                         <div className="flex flex-wrap gap-3">
                           <button
-                            onClick={() => setQuizData({ ...quizData, language: 'English' })}
-                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${
-                              quizData.language === 'English'
-                                ? 'bg-[#1a1a1a] text-white shadow-xl'
-                                : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
-                            }`}
+                            onClick={() => setQuizData({ ...quizData, language: quizData.language === 'English' ? '' : 'English' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${quizData.language === 'English'
+                              ? 'bg-[#1a1a1a] text-white shadow-xl'
+                              : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                              }`}
                           >
                             English
                           </button>
                           <button
-                            onClick={() => setQuizData({ ...quizData, language: 'Telugu' })}
-                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${
-                              quizData.language === 'Telugu'
-                                ? 'bg-[#1a1a1a] text-white shadow-xl'
-                                : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
-                            }`}
+                            onClick={() => setQuizData({ ...quizData, language: quizData.language === 'Telugu' ? '' : 'Telugu' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${quizData.language === 'Telugu'
+                              ? 'bg-[#1a1a1a] text-white shadow-xl'
+                              : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                              }`}
                           >
                             Telugu
                           </button>
@@ -171,22 +183,20 @@ const NextPage = () => {
                       <div className="space-y-4">
                         <div className="flex flex-wrap gap-3">
                           <button
-                            onClick={() => setQuizData({ ...quizData, topic: 'Python' })}
-                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${
-                              quizData.topic === 'Python'
-                                ? 'bg-[#1a1a1a] text-white shadow-xl'
-                                : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
-                            }`}
+                            onClick={() => setQuizData({ ...quizData, topic: quizData.topic === 'Python' ? '' : 'Python' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${quizData.topic === 'Python'
+                              ? 'bg-[#1a1a1a] text-white shadow-xl'
+                              : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                              }`}
                           >
                             Python
                           </button>
                           <button
-                            onClick={() => setQuizData({ ...quizData, topic: 'C++' })}
-                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${
-                              quizData.topic === 'C++'
-                                ? 'bg-[#1a1a1a] text-white shadow-xl'
-                                : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
-                            }`}
+                            onClick={() => setQuizData({ ...quizData, topic: quizData.topic === 'C++' ? '' : 'C++' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${quizData.topic === 'C++'
+                              ? 'bg-[#1a1a1a] text-white shadow-xl'
+                              : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                              }`}
                           >
                             C++
                           </button>
@@ -204,22 +214,20 @@ const NextPage = () => {
                       <div className="space-y-4">
                         <div className="flex flex-wrap gap-3">
                           <button
-                            onClick={() => setQuizData({ ...quizData, subtopic: 'Strings' })}
-                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${
-                              quizData.subtopic === 'Strings'
-                                ? 'bg-[#1a1a1a] text-white shadow-xl'
-                                : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
-                            }`}
+                            onClick={() => setQuizData({ ...quizData, subtopic: quizData.subtopic === 'Strings' ? '' : 'Strings' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${quizData.subtopic === 'Strings'
+                              ? 'bg-[#1a1a1a] text-white shadow-xl'
+                              : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                              }`}
                           >
                             Strings
                           </button>
                           <button
-                            onClick={() => setQuizData({ ...quizData, subtopic: 'Functions' })}
-                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${
-                              quizData.subtopic === 'Functions'
-                                ? 'bg-[#1a1a1a] text-white shadow-xl'
-                                : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
-                            }`}
+                            onClick={() => setQuizData({ ...quizData, subtopic: quizData.subtopic === 'Functions' ? '' : 'Functions' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${quizData.subtopic === 'Functions'
+                              ? 'bg-[#1a1a1a] text-white shadow-xl'
+                              : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                              }`}
                           >
                             Functions
                           </button>
@@ -237,22 +245,20 @@ const NextPage = () => {
                       <div className="space-y-4">
                         <div className="flex flex-wrap gap-3">
                           <button
-                            onClick={() => setQuizData({ ...quizData, instructions: 'Genz Tone' })}
-                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${
-                              quizData.instructions === 'Genz Tone'
-                                ? 'bg-[#1a1a1a] text-white shadow-xl'
-                                : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
-                            }`}
+                            onClick={() => setQuizData({ ...quizData, instructions: quizData.instructions === 'Genz Tone' ? '' : 'Genz Tone' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${quizData.instructions === 'Genz Tone'
+                              ? 'bg-[#1a1a1a] text-white shadow-xl'
+                              : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                              }`}
                           >
                             Genz Tone
                           </button>
                           <button
-                            onClick={() => setQuizData({ ...quizData, instructions: 'Chill Tone' })}
-                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${
-                              quizData.instructions === 'Chill Tone'
-                                ? 'bg-[#1a1a1a] text-white shadow-xl'
-                                : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
-                            }`}
+                            onClick={() => setQuizData({ ...quizData, instructions: quizData.instructions === 'Chill Tone' ? '' : 'Chill Tone' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${quizData.instructions === 'Chill Tone'
+                              ? 'bg-[#1a1a1a] text-white shadow-xl'
+                              : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                              }`}
                           >
                             Chill Tone
                           </button>
@@ -270,22 +276,20 @@ const NextPage = () => {
                       <div className="space-y-4">
                         <div className="flex flex-wrap gap-3">
                           <button
-                            onClick={() => setQuizData({ ...quizData, numQuestions: '4' })}
-                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${
-                              quizData.numQuestions === '4'
-                                ? 'bg-[#1a1a1a] text-white shadow-xl'
-                                : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
-                            }`}
+                            onClick={() => setQuizData({ ...quizData, numQuestions: quizData.numQuestions === '4' ? '' : '4' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${quizData.numQuestions === '4'
+                              ? 'bg-[#1a1a1a] text-white shadow-xl'
+                              : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                              }`}
                           >
                             4
                           </button>
                           <button
-                            onClick={() => setQuizData({ ...quizData, numQuestions: '8' })}
-                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${
-                              quizData.numQuestions === '8'
-                                ? 'bg-[#1a1a1a] text-white shadow-xl'
-                                : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
-                            }`}
+                            onClick={() => setQuizData({ ...quizData, numQuestions: quizData.numQuestions === '8' ? '' : '8' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${quizData.numQuestions === '8'
+                              ? 'bg-[#1a1a1a] text-white shadow-xl'
+                              : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                              }`}
                           >
                             8
                           </button>
