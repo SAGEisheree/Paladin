@@ -22,7 +22,7 @@ const NextPage = () => {
   };
 
   const handleGo = () => {
-    navigate('/quiz');
+    navigate('/chat');
   };
 
   const tabs = [
