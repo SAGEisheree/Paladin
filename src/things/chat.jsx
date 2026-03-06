@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useQuizContext } from './quizContext';
-import { Send, Bot, User } from 'lucide-react';
+import { Send, Bot, User, Brain } from 'lucide-react';
 import Nav from './nav.jsx';
 import OpenAI from "openai"; // Import it here instead
 import { marked } from 'marked';
@@ -13,6 +13,15 @@ const Chat = () => {
   const [progress, setProgress] = useState(0);
   const scrollRef = useRef(null);
   const isFirstRun = useRef(true);
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, loading]);
 
   // Initialize Groq Client
   const client = new OpenAI({
@@ -149,7 +158,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#57c5e8] flex flex-col">
+    <div className="h-screen bg-[#57c5e8] flex flex-col overflow-hidden">
       <style>{`
                 .markdown-content h1, .markdown-content h2, .markdown-content h3 { font-weight: bold; margin: 1em 0 0.5em 0; }
                 .markdown-content h1 { font-size: 1.5em; }
@@ -165,58 +174,107 @@ const Chat = () => {
                 .markdown-content pre code { background-color: transparent; padding: 0; }
             `}</style>
       <Nav />
-      <div className="flex-1 max-w-4xl mx-auto w-full p-4 flex flex-col overflow-hidden">
-        {/* Progress Bar */}
-        <div className="mb-4 bg-white/20 backdrop-blur-md rounded-2xl p-4 border border-white/30 shadow-lg">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-black uppercase tracking-widest opacity-60">Goal: {quizData.knowledgeLevel} Mastery</span>
-            <span className="text-xs font-black">{progress}%</span>
+      <div className="flex-1 max-w-7xl mx-auto w-full px-4 pb-4 flex flex-col lg:flex-row gap-6 overflow-hidden relative">
+
+        {/* Mobile Header: Progress Indicator (Visible only on small screens) */}
+        <div className="lg:hidden flex items-center justify-between p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 mb-2">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Progress</span>
+            <span className="text-xl font-black text-white">{progress}%</span>
           </div>
-          <div className="w-full h-3 bg-black/10 rounded-full overflow-hidden">
+          <div className="flex-1 mx-4 h-2 bg-white/10 rounded-full overflow-hidden border border-white/5">
             <div
-              className="h-full bg-[#1a1a1a] transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(0,0,0,0.2)]"
+              className="h-full bg-white rounded-full transition-all duration-1000 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
+          <div className="text-[10px] font-black uppercase tracking-widest opacity-60 text-right">
+            {quizData.knowledgeLevel}
+          </div>
         </div>
 
-        <div className="flex-1 bg-white/20 backdrop-blur-md rounded-3xl p-6 overflow-y-auto space-y-4">
-          {messages.map((m, i) => (
-            <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] p-4 rounded-2xl ${m.role === 'user' ? 'bg-[#1a1a1a] text-white' : 'bg-white text-black shadow-lg border border-black/5'}`}>
-                {m.role === 'assistant' ? (
+        {/* Left Side: Chat Window */}
+        <div className="flex-[3] flex flex-col min-w-0 relative h-full">
+          <div className="flex-1 bg-white/20 backdrop-blur-md rounded-[2.5rem] p-4 md:p-6 overflow-y-auto space-y-4 shadow-xl border border-white/30 custom-scrollbar mb-20 md:mb-24">
+            {messages.map((m, i) => (
+              <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[90%] md:max-w-[85%] p-4 rounded-2xl ${m.role === 'user' ? 'bg-[#1a1a1a] text-white' : 'bg-white text-black shadow-lg border border-black/5'}`}>
+                  {m.role === 'assistant' ? (
+                    <div
+                      className="markdown-content text-sm md:text-base"
+                      dangerouslySetInnerHTML={{ __html: marked(m.content) }}
+                      style={{ lineHeight: '1.6' }}
+                    />
+                  ) : (
+                    <span className="text-sm md:text-base">{m.content}</span>
+                  )}
+                </div>
+              </div>
+            ))}
+            {loading && (
+              <div className="flex justify-start">
+                <div className="bg-white text-black p-4 rounded-2xl shadow-lg border border-black/5 animate-pulse text-sm md:text-base">
+                  Paladin is thinking...
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Absolute Input Container - Pins to bottom of the relative parent */}
+          <form
+            onSubmit={(e) => { e.preventDefault(); sendMessage(input); setInput(''); }}
+            className="absolute bottom-0 left-0 right-0 p-2 md:py-4 flex gap-2 md:gap-3 bg-transparent z-10"
+          >
+            <input
+              className="flex-1 p-4 md:p-5 rounded-3xl bg-white/80 backdrop-blur-xl border border-white/50 focus:ring-2 focus:ring-black placeholder:text-black/40 text-base md:text-lg shadow-2xl"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your answer..."
+            />
+            <button type="submit" className="bg-[#1a1a1a] text-white px-5 md:px-8 rounded-3xl hover:scale-105 active:scale-95 transition-transform shadow-2xl flex items-center justify-center">
+              <Send size={20} className="md:w-6 md:h-6" />
+            </button>
+          </form>
+        </div>
+
+        {/* Right Side: Progress Sidebar - Hidden on mobile, shown on lg */}
+        <div className="flex-1 min-w-[320px] hidden lg:flex flex-col gap-6 relative h-full">
+          <div className="bg-[#1a1a1a] text-white rounded-[2.5rem] p-8 shadow-2xl border border-white/10 flex flex-col shrink-0">
+            <div className="inline-block bg-[#57c5e8]/20 text-[#57c5e8] px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4 w-fit">
+              Mastery Analysis
+            </div>
+            <h3 className="text-3xl font-black mb-6 tracking-tighter leading-none">
+              Knowledge <br />
+              <span className="text-[#57c5e8]">Progress</span>
+            </h3>
+
+            <div className="space-y-6">
+              <div className="flex justify-between items-end">
+                <div className="text-xs font-bold opacity-40 uppercase tracking-widest">Level</div>
+                <div className="text-lg font-black">{quizData.knowledgeLevel}</div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-bold opacity-40 uppercase tracking-widest">Completion</span>
+                  <span className="text-2xl font-black text-[#57c5e8]">{progress}%</span>
+                </div>
+                <div className="w-full h-4 bg-white/10 rounded-full overflow-hidden border border-white/5 p-[2px]">
                   <div
-                    className="markdown-content"
-                    dangerouslySetInnerHTML={{ __html: marked(m.content) }}
-                    style={{ lineHeight: '1.6' }}
+                    className="h-full bg-[#57c5e8] rounded-full transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(87,197,232,0.5)]"
+                    style={{ width: `${progress}%` }}
                   />
-                ) : (
-                  m.content
-                )}
+                </div>
               </div>
-            </div>
-          ))}
-          {loading && (
-            <div className="flex justify-start">
-              <div className="bg-white text-black p-4 rounded-2xl shadow-lg border border-black/5 animate-pulse">
-                Paladin is thinking...
-              </div>
-            </div>
-          )}
-          <div ref={scrollRef} />
-        </div>
 
-        <form onSubmit={(e) => { e.preventDefault(); sendMessage(input); setInput(''); }} className="mt-4 flex gap-2">
-          <input
-            className="flex-1 p-4 rounded-2xl bg-white/40 border-none focus:ring-2 focus:ring-black placeholder:text-black/40"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your answer..."
-          />
-          <button type="submit" className="bg-[#1a1a1a] text-white p-4 rounded-2xl hover:scale-105 active:scale-95 transition-transform">
-            <Send size={24} />
-          </button>
-        </form>
+
+            </div>
+          </div>
+
+          {/* Quick Info Card */}
+
+        </div>
       </div>
     </div>
   );

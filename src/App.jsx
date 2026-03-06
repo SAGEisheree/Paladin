@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router';
 import HomePage from './things/homePage'
 import NextPage from './things/nextPage'
 import QuizPage from './things/quizPage'
+import About from './things/about'
 import { QuizProvider } from './things/quizContext';
 import Chat from './things/chat';
 
@@ -14,6 +15,7 @@ function App() {
           <Route path="/next" element={<NextPage />} />
           <Route path="/quiz" element={<QuizPage />} />
           <Route path="/chat" element={<Chat />} />
+          <Route path="/about" element={<About />} />
         </Routes>
       </BrowserRouter>
     </QuizProvider>
