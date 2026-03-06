@@ -8,9 +8,7 @@ export const QuizProvider = ({ children }) => {
     const [quizData, setQuizData] = useState({
         language: '',
         topic: '',
-        subtopic: '',
-        instructions: '',
-        numQuestions: ''
+        subtopic: ''
     });
 
     return (

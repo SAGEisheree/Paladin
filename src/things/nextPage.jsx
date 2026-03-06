@@ -135,54 +135,171 @@ const NextPage = () => {
 
                   <div className="mb-8 w-full max-w-xl">
                     {index === 0 && (
-                      <select
-                        value={quizData.language}
-                        onChange={(e) => setQuizData({ ...quizData, language: e.target.value })}
-                        className="w-full bg-white/20 border border-white/40 text-[#1a1a1a] px-6 py-4 rounded-2xl font-medium text-lg focus:outline-none focus:ring-2 focus:ring-black/20 appearance-none cursor-pointer"
-                      >
-                        <option value="" disabled>Select a Language</option>
-                        {languages.map(lang => (
-                          <option key={lang} value={lang}>{lang}</option>
-                        ))}
-                      </select>
+                      <div className="space-y-4">
+                        <div className="flex flex-wrap gap-3">
+                          <button
+                            onClick={() => setQuizData({ ...quizData, language: 'English' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${
+                              quizData.language === 'English'
+                                ? 'bg-[#1a1a1a] text-white shadow-xl'
+                                : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                            }`}
+                          >
+                            English
+                          </button>
+                          <button
+                            onClick={() => setQuizData({ ...quizData, language: 'Telugu' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${
+                              quizData.language === 'Telugu'
+                                ? 'bg-[#1a1a1a] text-white shadow-xl'
+                                : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                            }`}
+                          >
+                            Telugu
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="or enter custom language..."
+                          value={quizData.language === 'English' || quizData.language === 'Telugu' ? '' : quizData.language}
+                          onChange={(e) => setQuizData({ ...quizData, language: e.target.value })}
+                          className="w-full bg-white/20 border border-white/40 text-[#1a1a1a] placeholder:text-black/50 px-6 py-4 rounded-2xl font-medium text-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                        />
+                      </div>
                     )}
                     {index === 1 && (
-                      <input
-                        type="text"
-                        placeholder="e.g., Data Structures"
-                        value={quizData.topic}
-                        onChange={(e) => setQuizData({ ...quizData, topic: e.target.value })}
-                        className="w-full bg-white/20 border border-white/40 text-[#1a1a1a] placeholder:text-black/50 px-6 py-4 rounded-2xl font-medium text-lg focus:outline-none focus:ring-2 focus:ring-black/20"
-                      />
+                      <div className="space-y-4">
+                        <div className="flex flex-wrap gap-3">
+                          <button
+                            onClick={() => setQuizData({ ...quizData, topic: 'Python' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${
+                              quizData.topic === 'Python'
+                                ? 'bg-[#1a1a1a] text-white shadow-xl'
+                                : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                            }`}
+                          >
+                            Python
+                          </button>
+                          <button
+                            onClick={() => setQuizData({ ...quizData, topic: 'C++' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${
+                              quizData.topic === 'C++'
+                                ? 'bg-[#1a1a1a] text-white shadow-xl'
+                                : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                            }`}
+                          >
+                            C++
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="or enter custom topic..."
+                          value={quizData.topic === 'Python' || quizData.topic === 'C++' ? '' : quizData.topic}
+                          onChange={(e) => setQuizData({ ...quizData, topic: e.target.value })}
+                          className="w-full bg-white/20 border border-white/40 text-[#1a1a1a] placeholder:text-black/50 px-6 py-4 rounded-2xl font-medium text-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                        />
+                      </div>
                     )}
                     {index === 2 && (
-                      <input
-                        type="text"
-                        placeholder="e.g., Binary Trees"
-                        value={quizData.subtopic}
-                        onChange={(e) => setQuizData({ ...quizData, subtopic: e.target.value })}
-                        className="w-full bg-white/20 border border-white/40 text-[#1a1a1a] placeholder:text-black/50 px-6 py-4 rounded-2xl font-medium text-lg focus:outline-none focus:ring-2 focus:ring-black/20"
-                      />
+                      <div className="space-y-4">
+                        <div className="flex flex-wrap gap-3">
+                          <button
+                            onClick={() => setQuizData({ ...quizData, subtopic: 'Strings' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${
+                              quizData.subtopic === 'Strings'
+                                ? 'bg-[#1a1a1a] text-white shadow-xl'
+                                : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                            }`}
+                          >
+                            Strings
+                          </button>
+                          <button
+                            onClick={() => setQuizData({ ...quizData, subtopic: 'Functions' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${
+                              quizData.subtopic === 'Functions'
+                                ? 'bg-[#1a1a1a] text-white shadow-xl'
+                                : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                            }`}
+                          >
+                            Functions
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="or enter custom subtopic..."
+                          value={quizData.subtopic === 'Strings' || quizData.subtopic === 'Functions' ? '' : quizData.subtopic}
+                          onChange={(e) => setQuizData({ ...quizData, subtopic: e.target.value })}
+                          className="w-full bg-white/20 border border-white/40 text-[#1a1a1a] placeholder:text-black/50 px-6 py-4 rounded-2xl font-medium text-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                        />
+                      </div>
                     )}
                     {index === 3 && (
-                      <input
-                        type="text"
-                        placeholder="e.g., Explain like I'm 5"
-                        value={quizData.instructions}
-                        onChange={(e) => setQuizData({ ...quizData, instructions: e.target.value })}
-                        className="w-full bg-white/20 border border-white/40 text-[#1a1a1a] placeholder:text-black/50 px-6 py-4 rounded-2xl font-medium text-lg focus:outline-none focus:ring-2 focus:ring-black/20"
-                      />
+                      <div className="space-y-4">
+                        <div className="flex flex-wrap gap-3">
+                          <button
+                            onClick={() => setQuizData({ ...quizData, instructions: 'Genz Tone' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${
+                              quizData.instructions === 'Genz Tone'
+                                ? 'bg-[#1a1a1a] text-white shadow-xl'
+                                : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                            }`}
+                          >
+                            Genz Tone
+                          </button>
+                          <button
+                            onClick={() => setQuizData({ ...quizData, instructions: 'Chill Tone' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${
+                              quizData.instructions === 'Chill Tone'
+                                ? 'bg-[#1a1a1a] text-white shadow-xl'
+                                : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                            }`}
+                          >
+                            Chill Tone
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="or enter custom instructions..."
+                          value={quizData.instructions === 'Genz Tone' || quizData.instructions === 'Chill Tone' ? '' : quizData.instructions}
+                          onChange={(e) => setQuizData({ ...quizData, instructions: e.target.value })}
+                          className="w-full bg-white/20 border border-white/40 text-[#1a1a1a] placeholder:text-black/50 px-6 py-4 rounded-2xl font-medium text-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                        />
+                      </div>
                     )}
                     {index === 4 && (
-                      <input
-                        type="number"
-                        placeholder="e.g., 10"
-                        min="1"
-                        max="50"
-                        value={quizData.numQuestions}
-                        onChange={(e) => setQuizData({ ...quizData, numQuestions: e.target.value })}
-                        className="w-full bg-white/20 border border-white/40 text-[#1a1a1a] placeholder:text-black/50 px-6 py-4 rounded-2xl font-medium text-lg focus:outline-none focus:ring-2 focus:ring-black/20"
-                      />
+                      <div className="space-y-4">
+                        <div className="flex flex-wrap gap-3">
+                          <button
+                            onClick={() => setQuizData({ ...quizData, numQuestions: '4' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${
+                              quizData.numQuestions === '4'
+                                ? 'bg-[#1a1a1a] text-white shadow-xl'
+                                : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                            }`}
+                          >
+                            4
+                          </button>
+                          <button
+                            onClick={() => setQuizData({ ...quizData, numQuestions: '8' })}
+                            className={`px-6 py-3 rounded-2xl font-medium text-lg transition-all ${
+                              quizData.numQuestions === '8'
+                                ? 'bg-[#1a1a1a] text-white shadow-xl'
+                                : 'bg-white/20 border border-white/40 text-[#1a1a1a] hover:bg-white/30'
+                            }`}
+                          >
+                            8
+                          </button>
+                        </div>
+                        <input
+                          type="number"
+                          placeholder="or enter custom number..."
+                          min="1"
+                          max="50"
+                          value={quizData.numQuestions === '4' || quizData.numQuestions === '8' ? '' : quizData.numQuestions}
+                          onChange={(e) => setQuizData({ ...quizData, numQuestions: e.target.value })}
+                          className="w-full bg-white/20 border border-white/40 text-[#1a1a1a] placeholder:text-black/50 px-6 py-4 rounded-2xl font-medium text-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                        />
+                      </div>
                     )}
                   </div>
 

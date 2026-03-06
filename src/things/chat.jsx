@@ -3,6 +3,7 @@ import { useQuizContext } from './quizContext';
 import { Send, Bot, User } from 'lucide-react';
 import Nav from './nav.jsx';
 import OpenAI from "openai"; // Import it here instead
+import { marked } from 'marked';
 
 const Chat = () => {
   const { quizData } = useQuizContext();
@@ -27,6 +28,7 @@ const Chat = () => {
                 content: `You are a Socratic tutor teaching ${quizData.topic} (${quizData.subtopic}). 
                         Language: ${quizData.language}. Extra info: ${quizData.instructions}.
                         Ask exactly ${quizData.numQuestions} questions one by one. 
+                        **Always format your questions in bold** using **double asterisks** around the entire question.
                         Start now by introducing yourself and asking the first question.`
               },
               { role: "user", content: "I'm ready to start the quiz!" }
@@ -68,7 +70,8 @@ const Chat = () => {
             role: "system",
             content: `You are a Socratic tutor teaching ${quizData.topic}. 
                     Focus on ${quizData.subtopic}. Language: ${quizData.language}.
-                    Ask ${quizData.numQuestions} questions one by one.`
+                    Ask ${quizData.numQuestions} questions one by one.
+                    **Always format your questions in bold** using **double asterisks** around the entire question.`
           },
           ...updatedMessages
         ],
@@ -87,13 +90,65 @@ const Chat = () => {
 
   return (
     <div className="min-h-screen bg-[#57c5e8] flex flex-col">
+      <style>{`
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+          font-weight: bold;
+          margin: 1em 0 0.5em 0;
+        }
+        .markdown-content h1 { font-size: 1.5em; }
+        .markdown-content h2 { font-size: 1.3em; }
+        .markdown-content h3 { font-size: 1.1em; }
+        .markdown-content p {
+          margin: 0.5em 0;
+        }
+        .markdown-content strong {
+          font-weight: bold;
+        }
+        .markdown-content em {
+          font-style: italic;
+        }
+        .markdown-content ul, .markdown-content ol {
+          margin: 0.5em 0;
+          padding-left: 1.5em;
+        }
+        .markdown-content li {
+          margin: 0.25em 0;
+        }
+        .markdown-content code {
+          background-color: rgba(0,0,0,0.1);
+          padding: 0.2em 0.4em;
+          border-radius: 0.25em;
+          font-family: monospace;
+        }
+        .markdown-content pre {
+          background-color: rgba(0,0,0,0.1);
+          padding: 1em;
+          border-radius: 0.5em;
+          overflow-x: auto;
+          margin: 0.5em 0;
+        }
+        .markdown-content pre code {
+          background-color: transparent;
+          padding: 0;
+        }
+      `}</style>
       <Nav />
       <div className="flex-1 max-w-4xl mx-auto w-full p-4 flex flex-col overflow-hidden">
         <div className="flex-1 bg-white/20 backdrop-blur-md rounded-3xl p-6 overflow-y-auto space-y-4">
           {messages.map((m, i) => (
             <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[80%] p-4 rounded-2xl ${m.role === 'user' ? 'bg-[#1a1a1a] text-white' : 'bg-white text-black'}`}>
-                {m.content}
+                {m.role === 'assistant' ? (
+                  <div 
+                    className="markdown-content"
+                    dangerouslySetInnerHTML={{ __html: marked(m.content) }}
+                    style={{
+                      lineHeight: '1.6',
+                    }}
+                  />
+                ) : (
+                  m.content
+                )}
               </div>
             </div>
           ))}
