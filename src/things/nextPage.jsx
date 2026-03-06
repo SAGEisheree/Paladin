@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
 import Nav from './nav.jsx';
 import { BookOpen, GraduationCap, Book, Users, Briefcase } from 'lucide-react';
+import { useQuizContext } from './quizContext';
 
 const NextPage = () => {
   const [activeTab, setActiveTab] = useState('Pick a Language');
-  const [formData, setFormData] = useState({
-    language: '',
-    topic: '',
-    subtopic: '',
-    instructions: '',
-    numQuestions: ''
-  });
+  const { quizData, setQuizData } = useQuizContext();
+  const navigate = useNavigate();
 
   const languages = [
     'English', 'Telugu', 'Hindi', 'Spanish', 'French',
@@ -25,8 +22,7 @@ const NextPage = () => {
   };
 
   const handleGo = () => {
-    console.log("Submitting:", formData);
-    // Submit action here
+    navigate('/quiz');
   };
 
   const tabs = [
@@ -140,8 +136,8 @@ const NextPage = () => {
                   <div className="mb-8 w-full max-w-xl">
                     {index === 0 && (
                       <select
-                        value={formData.language}
-                        onChange={(e) => setFormData({ ...formData, language: e.target.value })}
+                        value={quizData.language}
+                        onChange={(e) => setQuizData({ ...quizData, language: e.target.value })}
                         className="w-full bg-white/20 border border-white/40 text-[#1a1a1a] px-6 py-4 rounded-2xl font-medium text-lg focus:outline-none focus:ring-2 focus:ring-black/20 appearance-none cursor-pointer"
                       >
                         <option value="" disabled>Select a Language</option>
@@ -154,8 +150,8 @@ const NextPage = () => {
                       <input
                         type="text"
                         placeholder="e.g., Data Structures"
-                        value={formData.topic}
-                        onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
+                        value={quizData.topic}
+                        onChange={(e) => setQuizData({ ...quizData, topic: e.target.value })}
                         className="w-full bg-white/20 border border-white/40 text-[#1a1a1a] placeholder:text-black/50 px-6 py-4 rounded-2xl font-medium text-lg focus:outline-none focus:ring-2 focus:ring-black/20"
                       />
                     )}
@@ -163,8 +159,8 @@ const NextPage = () => {
                       <input
                         type="text"
                         placeholder="e.g., Binary Trees"
-                        value={formData.subtopic}
-                        onChange={(e) => setFormData({ ...formData, subtopic: e.target.value })}
+                        value={quizData.subtopic}
+                        onChange={(e) => setQuizData({ ...quizData, subtopic: e.target.value })}
                         className="w-full bg-white/20 border border-white/40 text-[#1a1a1a] placeholder:text-black/50 px-6 py-4 rounded-2xl font-medium text-lg focus:outline-none focus:ring-2 focus:ring-black/20"
                       />
                     )}
@@ -172,8 +168,8 @@ const NextPage = () => {
                       <input
                         type="text"
                         placeholder="e.g., Explain like I'm 5"
-                        value={formData.instructions}
-                        onChange={(e) => setFormData({ ...formData, instructions: e.target.value })}
+                        value={quizData.instructions}
+                        onChange={(e) => setQuizData({ ...quizData, instructions: e.target.value })}
                         className="w-full bg-white/20 border border-white/40 text-[#1a1a1a] placeholder:text-black/50 px-6 py-4 rounded-2xl font-medium text-lg focus:outline-none focus:ring-2 focus:ring-black/20"
                       />
                     )}
@@ -183,8 +179,8 @@ const NextPage = () => {
                         placeholder="e.g., 10"
                         min="1"
                         max="50"
-                        value={formData.numQuestions}
-                        onChange={(e) => setFormData({ ...formData, numQuestions: e.target.value })}
+                        value={quizData.numQuestions}
+                        onChange={(e) => setQuizData({ ...quizData, numQuestions: e.target.value })}
                         className="w-full bg-white/20 border border-white/40 text-[#1a1a1a] placeholder:text-black/50 px-6 py-4 rounded-2xl font-medium text-lg focus:outline-none focus:ring-2 focus:ring-black/20"
                       />
                     )}
