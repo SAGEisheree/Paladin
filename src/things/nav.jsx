@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router';
-import { Sparkles, MessageSquare, Brain, GraduationCap, Menu, X } from 'lucide-react';
+import { Sparkles, MessageSquare, Brain, GraduationCap, Menu, X, Flame } from 'lucide-react';
+import { useQuizContext } from './quizContext';
 
 const Nav = () => {
   const navigate = useNavigate();
+  const { streak } = useQuizContext();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -24,9 +26,14 @@ const Nav = () => {
         </div>
 
         <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 hover:bg-white/30 transition-all cursor-default select-none group">
+            <Flame size={18} className="text-orange-500 fill-orange-500/20 group-hover:scale-125 transition-transform" />
+            <span className="text-sm font-black tracking-tight">{streak} Streak</span>
+          </div>
+
           <button
             onClick={() => navigate('/about')}
-            className="hidden sm:block bg-white/20 hover:bg-white/30 backdrop-blur-md px-6 py-2 rounded-full font-bold transition border border-white/20"
+            className="hidden sm:block bg-[#1a1a1a] text-white px-6 py-2 rounded-full font-bold transition hover:scale-105 active:scale-95 shadow-sm"
           >
             Learn more
           </button>

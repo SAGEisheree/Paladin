@@ -67,6 +67,43 @@ export const QuizProvider = ({ children }) => {
         localStorage.removeItem('paladin_current_id');
     }, []);
 
+    const streak = React.useMemo(() => {
+        if (!previousQuizzes || previousQuizzes.length === 0) return 0;
+
+        const getLocalDateString = (date) => {
+            const d = new Date(date);
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        };
+
+        const activityDates = new Set(previousQuizzes.map(q => getLocalDateString(q.date)));
+
+        const today = new Date();
+        const todayStr = getLocalDateString(today);
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = getLocalDateString(yesterday);
+
+        // If no activity today AND no activity yesterday, streak is broken
+        if (!activityDates.has(todayStr) && !activityDates.has(yesterdayStr)) {
+            return 0;
+        }
+
+        let streakCount = 0;
+        let checkDate = new Date();
+
+        // If today is skipped, start counting from yesterday
+        if (!activityDates.has(todayStr)) {
+            checkDate.setDate(checkDate.getDate() - 1);
+        }
+
+        while (activityDates.has(getLocalDateString(checkDate))) {
+            streakCount++;
+            checkDate.setDate(checkDate.getDate() - 1);
+        }
+
+        return streakCount;
+    }, [previousQuizzes]);
+
     return (
         <QuizContext.Provider value={{
             quizData,
@@ -78,7 +115,8 @@ export const QuizProvider = ({ children }) => {
             updateQuizSession,
             deleteQuiz,
             selectSession,
-            resetQuiz
+            resetQuiz,
+            streak
         }}>
             {children}
         </QuizContext.Provider>
