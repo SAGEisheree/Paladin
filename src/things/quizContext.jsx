@@ -104,6 +104,8 @@ export const QuizProvider = ({ children }) => {
         return streakCount;
     }, [previousQuizzes]);
 
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
     return (
         <QuizContext.Provider value={{
             quizData,
@@ -116,7 +118,9 @@ export const QuizProvider = ({ children }) => {
             deleteQuiz,
             selectSession,
             resetQuiz,
-            streak
+            streak,
+            isShareModalOpen,
+            setIsShareModalOpen
         }}>
             {children}
         </QuizContext.Provider>

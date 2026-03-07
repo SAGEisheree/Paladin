@@ -5,7 +5,7 @@ import { useQuizContext } from './quizContext';
 
 const Nav = () => {
   const navigate = useNavigate();
-  const { streak } = useQuizContext();
+  const { streak, setIsShareModalOpen } = useQuizContext();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -26,7 +26,10 @@ const Nav = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 hover:bg-white/30 transition-all cursor-default select-none group">
+          <div
+            onClick={() => setIsShareModalOpen(true)}
+            className="flex items-center gap-3 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 hover:bg-white/30 transition-all cursor-pointer select-none group"
+          >
             <Flame size={18} className="text-orange-500 fill-orange-500/20 group-hover:scale-125 transition-transform" />
             <span className="text-sm font-black tracking-tight">{streak} Streak</span>
           </div>

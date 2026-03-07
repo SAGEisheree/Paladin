@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Sparkles, MessageSquare, Brain, GraduationCap, ChevronRight, ChevronDown, Trash2, X } from 'lucide-react';
+import { Sparkles, MessageSquare, Brain, GraduationCap, ChevronRight, ChevronDown, Trash2, X, Share2 } from 'lucide-react';
 import Nav from './nav.jsx';
 import { useQuizContext } from './quizContext';
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const { previousQuizzes, selectSession, deleteQuiz, resetQuiz } = useQuizContext();
+  const { previousQuizzes, selectSession, deleteQuiz, resetQuiz, setIsShareModalOpen } = useQuizContext();
   const [selectedQuiz, setSelectedQuiz] = useState(null);
 
   const handleStartNew = () => {
@@ -260,11 +260,18 @@ const HomePage = () => {
 
       {/* Previous Quizzes Section */}
       <section className="px-8 pb-32 w-full max-w-7xl mx-auto">
-        <div className="flex items-end justify-between mb-10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
           <div>
             <h2 className="text-4xl font-black tracking-tighter">Your Workspace</h2>
             <p className="text-lg font-medium opacity-60">Continue where you left off</p>
           </div>
+          <button
+            onClick={() => setIsShareModalOpen(true)}
+            className="flex items-center gap-2 bg-white/20 backdrop-blur-xl px-6 py-3 rounded-2xl border border-white/40 font-bold hover:bg-white/30 transition-all shadow-lg active:scale-95 group"
+          >
+            <Share2 size={20} className="group-hover:rotate-12 transition-transform" />
+            Share your journey
+          </button>
         </div>
 
         {previousQuizzes.length === 0 ? (
@@ -358,6 +365,61 @@ const HomePage = () => {
                 <p className="mt-4 text-sm text-[#57c5e8]/60 font-medium italic">
                   Actively questions assumptions, ensuring deep neurological retention.
                 </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why use Paladin-AI Section */}
+      <section className="px-8 pb-32 w-full max-w-7xl mx-auto">
+        <div className="bg-[#1a1a1a] text-white rounded-[3.5rem] p-8 md:p-16 shadow-2xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-[#57c5e8]/10 blur-[100px] -translate-y-1/2 translate-x-1/2" />
+
+          <div className="relative z-10">
+            <div className="mb-16">
+              <div className="inline-block bg-[#57c5e8]/20 text-[#57c5e8] px-4 py-1 rounded-full text-xs font-black uppercase tracking-[0.2em] mb-4">
+                Core Advantages
+              </div>
+              <h2 className="text-4xl md:text-6xl font-black tracking-tighter leading-none mb-6">
+                Why use <span className="text-[#57c5e8]">Paladin-AI?</span>
+              </h2>
+              <p className="text-xl text-white/50 font-medium leading-relaxed max-w-2xl italic">
+                Deep mastery through adaptive Socratic pedagogy.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-white/5 border border-white/10 p-8 rounded-[2.5rem] hover:bg-white/10 transition-colors">
+                <div className="text-[#57c5e8] mb-6">
+                  <Sparkles size={28} />
+                </div>
+                <h3 className="font-black text-xl mb-3 tracking-tight">Socratic Scaffolding</h3>
+                <p className="text-sm text-white/40 font-medium leading-relaxed">Guaranteed 0% SPOILER rate. We provide the mental ladder of questions, never the answers.</p>
+              </div>
+
+              <div className="bg-white/5 border border-white/10 p-8 rounded-[2.5rem] hover:bg-white/10 transition-colors">
+                <div className="text-[#57c5e8] mb-6">
+                  <Brain size={28} />
+                </div>
+                <h3 className="font-black text-xl mb-3 tracking-tight">Misconception Mapping</h3>
+                <p className="text-sm text-white/40 font-medium leading-relaxed">We don't just mark you wrong; we detect the underlying 'why' and pivot to fix it.</p>
+              </div>
+
+              <div className="bg-white/5 border border-white/10 p-8 rounded-[2.5rem] hover:bg-white/10 transition-colors">
+                <div className="text-[#57c5e8] mb-6">
+                  <MessageSquare size={28} />
+                </div>
+                <h3 className="font-black text-xl mb-3 tracking-tight">Active Reasoning</h3>
+                <p className="text-sm text-white/40 font-medium leading-relaxed">Difficulty shifts in real-time based on the subtle patterns in your logical deductions.</p>
+              </div>
+
+              <div className="bg-white/5 border border-white/10 p-8 rounded-[2.5rem] hover:bg-white/10 transition-colors">
+                <div className="text-[#57c5e8] mb-6">
+                  <GraduationCap size={28} />
+                </div>
+                <h3 className="font-black text-xl mb-3 tracking-tight">Logical Verification</h3>
+                <p className="text-sm text-white/40 font-medium leading-relaxed">Ensures you can explain the 'how' behind your 'correct' answer before moving forward.</p>
               </div>
             </div>
           </div>

@@ -5,6 +5,7 @@ import QuizPage from './things/quizPage'
 import About from './things/about'
 import { QuizProvider } from './things/quizContext';
 import Chat from './things/chat';
+import ShareModal from './things/shareModal';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/chat" element={<Chat />} />
           <Route path="/about" element={<About />} />
         </Routes>
+        <ShareModal />
       </BrowserRouter>
     </QuizProvider>
   )
