@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Sparkles, MessageSquare, Brain, GraduationCap, ChevronRight, Trash2, X } from 'lucide-react';
+import { Sparkles, MessageSquare, Brain, GraduationCap, ChevronRight, ChevronDown, Trash2, X } from 'lucide-react';
 import Nav from './nav.jsx';
 import { useQuizContext } from './quizContext';
 
@@ -33,6 +33,9 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-[#57c5e8] text-[#1a1a1a] selection:bg-white/30 relative overflow-x-hidden">
+      {/* Grid Pattern */}
+      <div className="absolute inset-0 pointer-events-none opacity-40 bg-[linear-gradient(to_right,#ffffff44_1px,transparent_1px),linear-gradient(to_bottom,#ffffff44_1px,transparent_1px)] bg-[size:60px_60px]"></div>
+
       {/* Background Doodles */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-20 select-none">
         {/* Top Left: Swirl */}
@@ -248,6 +251,10 @@ const HomePage = () => {
           <p className="text-xs font-black uppercase tracking-[0.3em] opacity-40">
             Adaptive Misconception Detection Engine
           </p>
+          <div className="flex flex-col items-center gap-2 mt-12 opacity-40 animate-bounce">
+            <span className="text-xs font-black uppercase tracking-[0.4em]">Scroll Down</span>
+            <ChevronDown size={24} />
+          </div>
         </div>
       </main>
 

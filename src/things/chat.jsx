@@ -11,6 +11,7 @@ const Chat = () => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [topics, setTopics] = useState([]);
   const scrollRef = useRef(null);
   const isFirstRun = useRef(true);
   const messagesEndRef = useRef(null);
@@ -40,6 +41,7 @@ const Chat = () => {
       // Priority 1: Restore existing session messages and progress
       setMessages(session.messages);
       setProgress(session.progress || 0);
+      setTopics(session.topics || []);
       if (!quizData.topic) setQuizData(session.config);
       isFirstRun.current = false;
     } else if (quizData.topic) {
@@ -60,7 +62,9 @@ const Chat = () => {
                                         1. Guide the student using Socratic questioning.
                                         2. Periodically assess their understanding.
                                         3. **At the end of EVERY response, you MUST include a progress update in this EXACT format: [[PROGRESS: X]] where X is an integer from 0 to 100 representing how close they are to the ${quizData.knowledgeLevel} goal.**
-                                        4. When progress reaches 100, congratulate them and conclude the session.
+                                        4. Current progress is 0. Only increment this when the student demonstrates genuine understanding of a sub-topic. Max increment per response should be around 5-10% unless they've mastered a major concept.
+                                        5. **Include a list of specific sub-topics discussed so far in this format: [[TOPICS: topic1, topic2, ...]] at the end of your response.**
+                                        6. When progress reaches 100, congratulate them and conclude the session.
                                         
                                         **Always format your questions in bold** using **double asterisks**.
                                         Start now by introducing yourself and asking the first question.`
@@ -78,14 +82,22 @@ const Chat = () => {
             setProgress(nextProgress);
           }
 
-          const cleanReply = firstReply.replace(/\[\[PROGRESS:\s*\d+\]\]/g, '').trim();
+          // Parse topics
+          const topicsMatch = firstReply.match(/\[\[TOPICS:\s*(.*?)\]\]/);
+          const nextTopics = topicsMatch ? topicsMatch[1].split(',').map(t => t.trim()) : topics;
+          if (topicsMatch) {
+            setTopics(nextTopics);
+          }
+
+          const cleanReply = firstReply.replace(/\[\[PROGRESS:\s*\d+\]\]/g, '').replace(/\[\[TOPICS:.*?\]\]/g, '').trim();
           const initialMessages = [{ role: "assistant", content: cleanReply }];
           setMessages(initialMessages);
 
           if (currentQuizId) {
             updateQuizSession(currentQuizId, {
               messages: initialMessages,
-              progress: nextProgress
+              progress: nextProgress,
+              topics: nextTopics
             });
           }
           isFirstRun.current = false;
@@ -122,7 +134,10 @@ const Chat = () => {
             content: `You are a Socratic tutor teaching ${quizData.topic}. 
                                 Focus on ${quizData.subtopic}. Language: ${quizData.language}.
                                 Goal: Reach ${quizData.knowledgeLevel} mastery.
+                                **Current Progress: ${progress}%**.
                                 **At the end of EVERY response, include: [[PROGRESS: X]]** where X is 0-100.
+                                Increment progress only if the user shows improvement. Never decrease progress.
+                                **Include: [[TOPICS: topic1, topic2, ...]]** representing sub-topics covered.
                                 **Always format questions in bold**.`
           },
           ...messages,
@@ -139,13 +154,21 @@ const Chat = () => {
         setProgress(nextProgress);
       }
 
-      const cleanReply = reply.replace(/\[\[PROGRESS:\s*\d+\]\]/g, '').trim();
+      // Parse topics
+      const topicsMatch = reply.match(/\[\[TOPICS:\s*(.*?)\]\]/);
+      const nextTopics = topicsMatch ? topicsMatch[1].split(',').map(t => t.trim()) : topics;
+      if (topicsMatch) {
+        setTopics(nextTopics);
+      }
+
+      const cleanReply = reply.replace(/\[\[PROGRESS:\s*\d+\]\]/g, '').replace(/\[\[TOPICS:.*?\]\]/g, '').trim();
       setMessages(prev => {
         const next = [...prev, { role: "assistant", content: cleanReply }];
         if (currentQuizId) {
           updateQuizSession(currentQuizId, {
             messages: next,
-            progress: nextProgress
+            progress: nextProgress,
+            topics: nextTopics
           });
         }
         return next;
@@ -239,17 +262,17 @@ const Chat = () => {
         </div>
 
         {/* Right Side: Progress Sidebar - Hidden on mobile, shown on lg */}
-        <div className="flex-1 min-w-[320px] hidden lg:flex flex-col gap-6 relative h-full">
-          <div className="bg-[#1a1a1a] text-white rounded-[2.5rem] p-8 shadow-2xl border border-white/10 flex flex-col shrink-0">
+        <div className="flex-1 min-w-[260px] hidden lg:flex flex-col gap-6 relative h-full">
+          <div className="rounded-3xl bg-[#1a1a1a] text-white  p-6 shadow-2xl border border-white/10 flex flex-col shrink-0">
             <div className="inline-block bg-[#57c5e8]/20 text-[#57c5e8] px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4 w-fit">
               Mastery Analysis
             </div>
-            <h3 className="text-3xl font-black mb-6 tracking-tighter leading-none">
+            <h3 className="text-xl font-black mb-4 tracking-tighter leading-none">
               Knowledge <br />
               <span className="text-[#57c5e8]">Progress</span>
             </h3>
 
-            <div className="space-y-6">
+            <div className="space-y-4">
               <div className="flex justify-between items-end">
                 <div className="text-xs font-bold opacity-40 uppercase tracking-widest">Level</div>
                 <div className="text-lg font-black">{quizData.knowledgeLevel}</div>
@@ -258,9 +281,9 @@ const Chat = () => {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-bold opacity-40 uppercase tracking-widest">Completion</span>
-                  <span className="text-2xl font-black text-[#57c5e8]">{progress}%</span>
+                  <span className="text-xl font-black text-[#57c5e8]">{progress}%</span>
                 </div>
-                <div className="w-full h-4 bg-white/10 rounded-full overflow-hidden border border-white/5 p-[2px]">
+                <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden border border-white/5">
                   <div
                     className="h-full bg-[#57c5e8] rounded-full transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(87,197,232,0.5)]"
                     style={{ width: `${progress}%` }}
@@ -269,6 +292,27 @@ const Chat = () => {
               </div>
 
 
+            </div>
+          </div>
+          <div className="rounded-3xl bg-[#1a1a1a] text-white p-6 shadow-2xl border border-white/10 flex flex-col shrink-0">
+            <div className="inline-block bg-[#57c5e8]/20 text-[#57c5e8] px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4 w-fit">
+              Topics Discussed
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {topics.length > 0 ? (
+                topics.map((topic, index) => (
+                  <div
+                    key={index}
+                    className="bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-xs font-medium text-white/80 hover:bg-white/10 transition-colors"
+                  >
+                    {topic}
+                  </div>
+                ))
+              ) : (
+                <div className="text-white/30 text-xs italic py-2">
+                  Topics will appear as we discuss them...
+                </div>
+              )}
             </div>
           </div>
 
